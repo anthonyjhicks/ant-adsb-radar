@@ -1,0 +1,58 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      # Host port is configurable so a second instance can run beside another
+      # (PUBLIC_API_URL must use the same port); inside the container it's 8001.
+      - "${BACKEND_PORT:-8001}:8001"
+    env_file:
+      - .env
+    environment:
+      - GIT_COMMIT=${GIT_COMMIT:-unknown}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    volumes:
+      # Permanent on-disk cache of aircraft thumbnails (see config.photo_cache_dir).
+      - photo-cache:/data/photos
+      # On-disk cache of airline logos (see config.logo_cache_dir).
+      - logo-cache:/data/logos
+      # On-disk cache of country flags (see config.flag_cache_dir).
+      - flag-cache:/data/flags
+      # Durable receiver history (hourly rollups, first-seen log, coverage).
+      - history:/data/history
+      # Durable kiosk display config (view order set from /config).
+      - config:/data/config
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Browser-reachable backend URL (API + SSE). Must be reachable from the
+        # kiosk/client network — set in .env per host.
+        PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:8001}
+    ports:
+      # Host port (ORIGIN must use the same port); inside the container it's 3000.
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      - ORIGIN=${ORIGIN:-http://localhost:3000}
+      # Server-side (SSR) calls use the compose service name.
+      - INTERNAL_API_URL=http://backend:8001
+    restart: unless-stopped
+
+volumes:
+  photo-cache:
+  logo-cache:
+  flag-cache:
+  history:
+  config:

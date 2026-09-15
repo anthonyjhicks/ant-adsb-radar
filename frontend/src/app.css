@@ -1,0 +1,64 @@
+@import 'tailwindcss';
+
+/*
+ * ant-adsb-radar — modern dark ATC console theme.
+ * Always-dark, near-black slate with cyan/emerald/amber accents.
+ * A shadcn-style dark palette pushed darker for a full-screen radar console,
+ * plus radar-specific scope variables.
+ */
+@theme {
+	--color-background: oklch(0.16 0.012 250);
+	--color-foreground: oklch(0.95 0.01 230);
+	--color-card: oklch(0.205 0.014 250);
+	--color-card-foreground: oklch(0.95 0.01 230);
+	--color-popover: oklch(0.205 0.014 250);
+	--color-popover-foreground: oklch(0.95 0.01 230);
+	--color-primary: oklch(0.78 0.13 195);
+	--color-primary-foreground: oklch(0.16 0.012 250);
+	--color-secondary: oklch(0.27 0.014 250);
+	--color-secondary-foreground: oklch(0.95 0.01 230);
+	--color-muted: oklch(0.27 0.014 250);
+	--color-muted-foreground: oklch(0.66 0.02 235);
+	--color-accent: oklch(0.27 0.02 250);
+	--color-accent-foreground: oklch(0.95 0.01 230);
+	--color-destructive: oklch(0.62 0.23 25);
+	--color-destructive-foreground: oklch(0.98 0.01 250);
+	--color-border: oklch(0.32 0.018 245);
+	--color-input: oklch(0.32 0.018 245);
+	--color-ring: oklch(0.55 0.05 220);
+	--radius: 0.5rem;
+
+	/* Radar scope */
+	--scope-line: oklch(0.62 0.12 165);          /* phosphor-green rings/grid */
+	--scope-sweep: oklch(0.85 0.18 160);         /* sweep leading edge */
+	--scope-glow: oklch(0.7 0.15 160 / 0.18);
+	--scope-bg: oklch(0.13 0.02 200);            /* water / sea */
+	--scope-land: oklch(0.235 0.018 165);        /* filled landmass (lighter than sea) */
+	--scope-terrain: oklch(0.62 0.05 245);       /* coastline edge + airports (steel) */
+	--scope-river: oklch(0.6 0.07 235);          /* rivers */
+	--flown: oklch(0.72 0.2 330);                /* aircraft the user has flown on */
+	--route: oklch(0.82 0.13 210);               /* closest contact's flight route */
+	--scope-airspace: oklch(0.7 0.1 290);        /* control-zone rings */
+
+	/* Altitude bands (FL) for blip coloring */
+	--alt-ground: oklch(0.7 0.02 250);
+	--alt-low: oklch(0.78 0.16 90);              /* < FL100 amber */
+	--alt-mid: oklch(0.78 0.15 145);             /* FL100-250 green */
+	--alt-high: oklch(0.74 0.14 230);            /* > FL250 blue */
+	--alt-emergency: oklch(0.65 0.25 25);        /* red */
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+	html {
+		background-color: var(--color-background);
+		color-scheme: dark;
+	}
+	body {
+		@apply bg-background text-foreground antialiased;
+		font-feature-settings: 'tnum' 1;
+		overflow: hidden;
+	}
+}

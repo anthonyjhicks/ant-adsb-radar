@@ -1,0 +1,32 @@
+[project]
+name = "ant-adsb-radar-backend"
+version = "1.0.0"
+description = "ATC console — readsb-protobuf aircraft API"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.7.0",
+    "httpx>=0.28.0",
+    "sse-starlette>=2.2.0",
+    "tenacity>=9.0.0",
+    "protobuf>=6.31.1",
+    "asyncpg>=0.29.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.8.0",
+    "pytest>=8.0.0",
+    "grpcio-tools>=1.60.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+# Generated protobuf bindings — do not lint.
+extend-exclude = ["app/proto/readsb_pb2.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

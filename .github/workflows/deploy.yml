@@ -1,0 +1,113 @@
+# ─────────────────────────────────────────────────────────────
+# deploy.yml — build + deploy to your own host over SSH
+# ─────────────────────────────────────────────────────────────
+# Optional. Runs on a self-hosted runner that can reach the target host, and
+# only when the DEPLOY_HOST repository variable is set — so a fork without one
+# skips it and CI (ci.yml) is the only workflow that runs.
+#
+# Repository variables (Settings → Secrets and variables → Actions → Variables):
+#   DEPLOY_HOST        user@host the runner can ssh to (key-based), with
+#                      passwordless `sudo docker` there
+#   REMOTE_DIR         checkout directory on the host, e.g. /opt/ant-adsb-radar
+#                      (defaults to that)
+#   DOTENV_COMMAND     (optional) a shell command whose stdout is the runtime
+#                      .env to ship — e.g. an export from your secrets manager.
+#                      Leave unset to keep a hand-maintained .env on the host.
+#
+# Runner requirements: rsync, ssh, Node.js (via setup-node), and whatever
+# DOTENV_COMMAND needs.
+# ─────────────────────────────────────────────────────────────
+
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+  workflow_dispatch:
+
+env:
+  DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+  REMOTE_DIR: ${{ vars.REMOTE_DIR || '/opt/ant-adsb-radar' }}
+
+jobs:
+  deploy:
+    if: ${{ vars.DEPLOY_HOST != '' }}
+    runs-on: self-hosted
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Frontend type-check
+        working-directory: frontend
+        # PUBLIC_API_URL must be present so SvelteKit generates the
+        # $env/static/public export that client.ts imports (the real value is
+        # baked in by the docker build on the host from the shipped .env).
+        env:
+          PUBLIC_API_URL: http://localhost:8001
+        run: |
+          npm ci
+          npm run check
+
+      - name: Render .env
+        if: ${{ vars.DOTENV_COMMAND != '' }}
+        env:
+          DOTENV_COMMAND: ${{ vars.DOTENV_COMMAND }}
+        # Any secrets the command needs come from repository secrets exposed as
+        # env here — add them to this step as `NAME: ${{ secrets.NAME }}`.
+        run: |
+          umask 077
+          bash -c "$DOTENV_COMMAND" > .env
+          test -s .env
+
+      - name: Sync code to host
+        run: |
+          ssh "${DEPLOY_HOST}" "sudo mkdir -p ${REMOTE_DIR} && sudo chown \$(id -un):\$(id -gn) ${REMOTE_DIR}"
+          # .env is excluded unless this run rendered one, so a hand-maintained
+          # copy on the host survives the sync (rsync --delete leaves excluded
+          # files alone).
+          EXCLUDE_ENV="--exclude .env"
+          if [ -s .env ]; then EXCLUDE_ENV=""; fi
+          rsync -avz --delete $EXCLUDE_ENV \
+            --exclude '.git' \
+            --exclude 'node_modules' \
+            --exclude '.svelte-kit' \
+            --exclude 'build' \
+            --exclude '__pycache__' \
+            --exclude '.venv' \
+            --exclude '.claude' \
+            ./ "${DEPLOY_HOST}:${REMOTE_DIR}/"
+
+      - name: Build and start containers
+        run: |
+          GIT_COMMIT="${GITHUB_SHA::7}"
+          echo "Deploying ${GIT_COMMIT} to ${DEPLOY_HOST}:${REMOTE_DIR}"
+          ssh "${DEPLOY_HOST}" "cd ${REMOTE_DIR} && test -f .env || { echo 'no .env on host'; exit 1; }"
+          ssh "${DEPLOY_HOST}" "cd ${REMOTE_DIR} && \
+            sudo env GIT_COMMIT=${GIT_COMMIT} COMPOSE_BAKE=true docker compose build && \
+            sudo env GIT_COMMIT=${GIT_COMMIT} docker compose up -d --remove-orphans"
+
+      - name: Verify deployment
+        run: |
+          EXPECTED="${GITHUB_SHA::7}"
+          echo "Expected version: ${EXPECTED}"
+          sleep 10
+          echo "=== container status ==="
+          ssh "${DEPLOY_HOST}" "cd ${REMOTE_DIR} && sudo docker compose ps"
+          DEPLOYED=$(ssh "${DEPLOY_HOST}" "curl -sf http://localhost:8001/api/health" | grep -o '"version":"[^"]*"' | cut -d'"' -f4) || DEPLOYED="unreachable"
+          if [ "$DEPLOYED" = "$EXPECTED" ]; then
+            echo "✓ deployed ${DEPLOYED}"
+          else
+            echo "✗ deployed ${DEPLOYED} (expected ${EXPECTED})"
+            exit 1
+          fi

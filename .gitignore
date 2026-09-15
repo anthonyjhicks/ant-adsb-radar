@@ -1,0 +1,16 @@
+.env
+.deploy.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+node_modules/
+.svelte-kit/
+build/
+.DS_Store
+*.log
+*.db
+*.db-shm
+*.db-wal
+.claude/

@@ -1,0 +1,56 @@
+# ─────────────────────────────────────────────────────────────
+# ci.yml — lint, type-check and test on every push / pull request
+# ─────────────────────────────────────────────────────────────
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - name: Install
+        run: uv sync --extra dev
+      - name: Lint
+        run: uv run ruff check app tests
+      - name: Test
+        run: uv run pytest -q
+
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install
+        run: npm ci
+      - name: Type-check
+        # PUBLIC_API_URL must be present so SvelteKit generates the
+        # $env/static/public export that client.ts imports.
+        env:
+          PUBLIC_API_URL: http://localhost:8001
+        run: npm run check
+      - name: Test
+        env:
+          PUBLIC_API_URL: http://localhost:8001
+        run: npm test
+      - name: Build
+        env:
+          PUBLIC_API_URL: http://localhost:8001
+        run: npm run build
