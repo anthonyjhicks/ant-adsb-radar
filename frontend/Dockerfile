@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM node:22-slim AS build
+FROM node:24-slim AS build
 WORKDIR /app
 
 ARG PUBLIC_API_URL
@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY . .
 RUN npx svelte-kit sync && npm run build
 
-FROM node:22-slim
+FROM node:24-slim
 WORKDIR /app
 
 COPY --from=build /app/build build/
