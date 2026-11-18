@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { fmtBearing } from '$lib/utils/geo';
-	import { getPhoto, photoCache, type AircraftPhoto } from '$lib/api/photo';
-	import PhotoCell from '$lib/components/PhotoCell.svelte';
-	import type { Aircraft } from '$lib/types/radar';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { fmtBearing } from '#lib/utils/geo.ts';
+	import { getPhoto, photoCache, type AircraftPhoto } from '#lib/api/photo.ts';
+	import PhotoCell from '#lib/components/PhotoCell.svelte';
+	import type { Aircraft } from '#lib/types/radar.ts';
 
 	// Out-of-the-ordinary contacts overhead right now: military, "interesting"
 	// (warbirds, heads-of-state, test airframes) per the Mictronics flags, or an

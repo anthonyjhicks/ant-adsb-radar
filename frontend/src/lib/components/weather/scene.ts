@@ -9,7 +9,7 @@
 // drifts everything leftwards (eastward). Drift speed follows the wind speed,
 // gusts arrive as periodic surges, and higher cloud decks move a little faster.
 
-import { CALM_CONDITIONS, driftDirection, type SceneConditions } from '$lib/utils/weather';
+import { CALM_CONDITIONS, driftDirection, type SceneConditions } from '#lib/utils/weather.ts';
 
 export interface SceneSun {
 	/** Degrees above the horizon (negative = below). */

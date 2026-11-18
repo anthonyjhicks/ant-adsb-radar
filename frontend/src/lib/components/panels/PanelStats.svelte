@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { formatNumber } from '$lib/utils/format';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { formatNumber } from '#lib/utils/format.ts';
 
 	let snap = $derived(radarStore.snapshot);
 	let stats = $derived(radarStore.stats);

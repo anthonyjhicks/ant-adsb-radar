@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { radarStore } from '$lib/stores/radar.svelte';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
 
 	// Polar histogram (compass rose) of the directions airborne contacts are
 	// tracking — reveals the dominant airway flows and the arrival/departure

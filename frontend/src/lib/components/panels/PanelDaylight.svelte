@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { RAD, solar } from '$lib/utils/solar';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { RAD, solar } from '#lib/utils/solar.ts';
 
 	// Sun position + day/night for the receiver location, computed from lat/lon
 	// and the current time (NOAA solar equations — no external data). Shows where

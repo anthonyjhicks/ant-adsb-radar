@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getSeenToday, type SeenAircraft } from '$lib/api/history';
+	import { getSeenToday, type SeenAircraft } from '#lib/api/history.ts';
 
 	// First-seen-today log: every airframe the receiver has logged for the first
 	// time since 00:00Z, newest first. Rare types and military/interesting

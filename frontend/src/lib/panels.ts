@@ -1,23 +1,23 @@
 import type { Component } from 'svelte';
-import PanelScope from '$lib/components/panels/PanelScope.svelte';
-import PanelStrips from '$lib/components/panels/PanelStrips.svelte';
-import PanelSpotlight from '$lib/components/panels/PanelSpotlight.svelte';
-import PanelAltitude from '$lib/components/panels/PanelAltitude.svelte';
-import PanelAirspace3D from '$lib/components/panels/PanelAirspace3D.svelte';
-import PanelFleet from '$lib/components/panels/PanelFleet.svelte';
-import PanelWatch from '$lib/components/panels/PanelWatch.svelte';
-import PanelMovers from '$lib/components/panels/PanelMovers.svelte';
-import PanelMetar from '$lib/components/panels/PanelMetar.svelte';
-import PanelStats from '$lib/components/panels/PanelStats.svelte';
-import PanelNewToday from '$lib/components/panels/PanelNewToday.svelte';
-import PanelInteresting from '$lib/components/panels/PanelInteresting.svelte';
-import PanelTrends from '$lib/components/panels/PanelTrends.svelte';
-import PanelCoverage from '$lib/components/panels/PanelCoverage.svelte';
-import PanelPhotos from '$lib/components/panels/PanelPhotos.svelte';
-import PanelSignal from '$lib/components/panels/PanelSignal.svelte';
-import PanelTrackRose from '$lib/components/panels/PanelTrackRose.svelte';
-import PanelLifelist from '$lib/components/panels/PanelLifelist.svelte';
-import PanelDaylight from '$lib/components/panels/PanelDaylight.svelte';
+import PanelScope from '#lib/components/panels/PanelScope.svelte';
+import PanelStrips from '#lib/components/panels/PanelStrips.svelte';
+import PanelSpotlight from '#lib/components/panels/PanelSpotlight.svelte';
+import PanelAltitude from '#lib/components/panels/PanelAltitude.svelte';
+import PanelAirspace3D from '#lib/components/panels/PanelAirspace3D.svelte';
+import PanelFleet from '#lib/components/panels/PanelFleet.svelte';
+import PanelWatch from '#lib/components/panels/PanelWatch.svelte';
+import PanelMovers from '#lib/components/panels/PanelMovers.svelte';
+import PanelMetar from '#lib/components/panels/PanelMetar.svelte';
+import PanelStats from '#lib/components/panels/PanelStats.svelte';
+import PanelNewToday from '#lib/components/panels/PanelNewToday.svelte';
+import PanelInteresting from '#lib/components/panels/PanelInteresting.svelte';
+import PanelTrends from '#lib/components/panels/PanelTrends.svelte';
+import PanelCoverage from '#lib/components/panels/PanelCoverage.svelte';
+import PanelPhotos from '#lib/components/panels/PanelPhotos.svelte';
+import PanelSignal from '#lib/components/panels/PanelSignal.svelte';
+import PanelTrackRose from '#lib/components/panels/PanelTrackRose.svelte';
+import PanelLifelist from '#lib/components/panels/PanelLifelist.svelte';
+import PanelDaylight from '#lib/components/panels/PanelDaylight.svelte';
 import {
 	DEFAULT_STATION,
 	MAX_HOME_NM,
@@ -25,7 +25,7 @@ import {
 	MIN_HOME_NM,
 	MIN_LOCAL_NM,
 	type StationConfig
-} from '$lib/api/config';
+} from '#lib/api/config.ts';
 
 export type Accent = 'emerald' | 'cyan' | 'amber' | 'violet' | 'sky' | 'red';
 

@@ -2,9 +2,9 @@
 	// One airport: a north-up runway schematic with the wind-favoured ends lit
 	// and approach chevrons streaming onto them, the wind vector on the rim,
 	// head/crosswind components per active end, and the raw METAR.
-	import type { Metar } from '$lib/api/metar';
-	import { RUNWAY_LAYOUTS, layoutGeometry } from '$lib/data/runways';
-	import { categoryClass, fmtVisibility, fmtWind } from '$lib/utils/weather';
+	import type { Metar } from '#lib/api/metar.ts';
+	import { RUNWAY_LAYOUTS, layoutGeometry } from '#lib/data/runways.ts';
+	import { categoryClass, fmtVisibility, fmtWind } from '#lib/utils/weather.ts';
 
 	let { icao, metar }: { icao: string; metar?: Metar } = $props();
 

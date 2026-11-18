@@ -5,10 +5,10 @@
 	// airport with its runway schematic, the wind-favoured ends lit, and the
 	// head/crosswind on each.
 	import { onMount } from 'svelte';
-	import { DEFAULT_STATION } from '$lib/api/config';
-	import { getMetars, type Metar } from '$lib/api/metar';
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { solar } from '$lib/utils/solar';
+	import { DEFAULT_STATION } from '#lib/api/config.ts';
+	import { getMetars, type Metar } from '#lib/api/metar.ts';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { solar } from '#lib/utils/solar.ts';
 	import {
 		categoryClass,
 		compass16,
@@ -21,8 +21,8 @@
 		obsAgeMin,
 		sceneConditions,
 		skyLine
-	} from '$lib/utils/weather';
-	import WeatherScene from '$lib/components/weather/WeatherScene.svelte';
+	} from '#lib/utils/weather.ts';
+	import WeatherScene from '#lib/components/weather/WeatherScene.svelte';
 	import RunwayCard from './RunwayCard.svelte';
 
 	// The runway cards, in this order — the station's weather airports from

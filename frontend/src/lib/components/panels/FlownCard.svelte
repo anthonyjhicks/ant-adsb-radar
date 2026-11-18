@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { altColor, fmtBearing } from '$lib/utils/geo';
-	import { getPhoto, photoCache, type AircraftPhoto } from '$lib/api/photo';
-	import { getRoute, routeCache, airportCode } from '$lib/api/route';
-	import { flagUrl } from '$lib/api/flag';
-	import { reactiveLookup } from '$lib/utils/lookup.svelte';
-	import Silhouette, { silhouetteKind } from '$lib/components/Silhouette.svelte';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { altColor, fmtBearing } from '#lib/utils/geo.ts';
+	import { getPhoto, photoCache, type AircraftPhoto } from '#lib/api/photo.ts';
+	import { getRoute, routeCache, airportCode } from '#lib/api/route.ts';
+	import { flagUrl } from '#lib/api/flag.ts';
+	import { reactiveLookup } from '#lib/utils/lookup.svelte.ts';
+	import Silhouette, { silhouetteKind } from '#lib/components/Silhouette.svelte';
 
 	// Aircraft on the scope that the user has flown on, nearest first.
 	let flownOnScope = $derived(

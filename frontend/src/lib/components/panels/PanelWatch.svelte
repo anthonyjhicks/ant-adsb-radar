@@ -6,19 +6,19 @@
 	// until it clears, so this is a deep-dive on the aircraft, not a summary:
 	// the radar scope on the left, fitted to the emergency contact with a target
 	// reticle and its route; the photo and full detail on the right.
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { altColor, cpaToStation, fmtBearing, type CPA } from '$lib/utils/geo';
-	import { formatDuration } from '$lib/utils/format';
-	import { getPhoto, photoCache, type AircraftPhoto } from '$lib/api/photo';
-	import { getRoute, routeCache } from '$lib/api/route';
-	import { getAircraft, aircraftCache } from '$lib/api/aircraft';
-	import { getAircraftHistory, aircraftHistoryCache } from '$lib/api/history';
-	import { logoUrl } from '$lib/api/logo';
-	import { reactiveLookup } from '$lib/utils/lookup.svelte';
-	import PhotoFrame from '$lib/components/PhotoFrame.svelte';
-	import Silhouette, { silhouetteKind } from '$lib/components/Silhouette.svelte';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { altColor, cpaToStation, fmtBearing, type CPA } from '#lib/utils/geo.ts';
+	import { formatDuration } from '#lib/utils/format.ts';
+	import { getPhoto, photoCache, type AircraftPhoto } from '#lib/api/photo.ts';
+	import { getRoute, routeCache } from '#lib/api/route.ts';
+	import { getAircraft, aircraftCache } from '#lib/api/aircraft.ts';
+	import { getAircraftHistory, aircraftHistoryCache } from '#lib/api/history.ts';
+	import { logoUrl } from '#lib/api/logo.ts';
+	import { reactiveLookup } from '#lib/utils/lookup.svelte.ts';
+	import PhotoFrame from '#lib/components/PhotoFrame.svelte';
+	import Silhouette, { silhouetteKind } from '#lib/components/Silhouette.svelte';
 	import PanelScope from './PanelScope.svelte';
-	import type { Aircraft } from '$lib/types/radar';
+	import type { Aircraft } from '#lib/types/radar.ts';
 
 	let snap = $derived(radarStore.snapshot);
 	let ac = $derived(snap?.aircraft ?? []);

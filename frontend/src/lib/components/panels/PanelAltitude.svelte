@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { altColor } from '$lib/utils/geo';
-	import type { Aircraft } from '$lib/types/radar';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { altColor } from '#lib/utils/geo.ts';
+	import type { Aircraft } from '#lib/types/radar.ts';
 
 	// Range-vs-height scatter of the airborne picture — the approach/departure
 	// stack. Two colour lenses, toggled in the header:

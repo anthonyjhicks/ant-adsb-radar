@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { getLeaders, type Leaders } from '$lib/api/history';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { getLeaders, type Leaders } from '#lib/api/history.ts';
 
 	// Operators and aircraft types — either who's overhead right now (from the
 	// live snapshot), or the most-seen over the last 7 / 30 days (durable SQLite

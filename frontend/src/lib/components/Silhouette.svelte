@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import type { Aircraft } from '$lib/types/radar';
+	import type { Aircraft } from '#lib/types/radar.ts';
 
 	export type SilKind = 'airliner' | 'heli' | 'light';
 

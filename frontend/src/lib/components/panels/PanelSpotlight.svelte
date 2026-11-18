@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { radarStore } from '$lib/stores/radar.svelte';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
 	import {
 		altColor,
 		fmtBearing,
@@ -7,16 +7,16 @@
 		cpaToStation,
 		type RouteProgress,
 		type CPA
-	} from '$lib/utils/geo';
-	import { formatDuration } from '$lib/utils/format';
-	import { getPhoto, photoCache, type AircraftPhoto } from '$lib/api/photo';
-	import { getRoute, routeCache, airportCode } from '$lib/api/route';
-	import { getAircraft, aircraftCache } from '$lib/api/aircraft';
-	import { getAircraftHistory, aircraftHistoryCache } from '$lib/api/history';
-	import { logoUrl } from '$lib/api/logo';
-	import { reactiveLookup } from '$lib/utils/lookup.svelte';
-	import PhotoFrame from '$lib/components/PhotoFrame.svelte';
-	import Silhouette, { silhouetteKind } from '$lib/components/Silhouette.svelte';
+	} from '#lib/utils/geo.ts';
+	import { formatDuration } from '#lib/utils/format.ts';
+	import { getPhoto, photoCache, type AircraftPhoto } from '#lib/api/photo.ts';
+	import { getRoute, routeCache, airportCode } from '#lib/api/route.ts';
+	import { getAircraft, aircraftCache } from '#lib/api/aircraft.ts';
+	import { getAircraftHistory, aircraftHistoryCache } from '#lib/api/history.ts';
+	import { logoUrl } from '#lib/api/logo.ts';
+	import { reactiveLookup } from '#lib/utils/lookup.svelte.ts';
+	import PhotoFrame from '#lib/components/PhotoFrame.svelte';
+	import Silhouette, { silhouetteKind } from '#lib/components/Silhouette.svelte';
 
 	let snap = $derived(radarStore.snapshot);
 
