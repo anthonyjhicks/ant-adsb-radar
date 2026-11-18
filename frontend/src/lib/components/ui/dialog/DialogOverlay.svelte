@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Dialog } from 'bits-ui';
-	import { cn } from '$lib/utils/cn';
+	import { cn } from '#lib/utils/cn.ts';
 
 	let { class: className, ...restProps }: { class?: string } & Record<string, unknown> = $props();
 </script>

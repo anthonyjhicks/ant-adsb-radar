@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { altColor, fmtBearing } from '$lib/utils/geo';
-	import { getPhoto, photoCache, type AircraftPhoto } from '$lib/api/photo';
-	import { getRoute, routeCache, airportCode } from '$lib/api/route';
-	import { reactiveLookup } from '$lib/utils/lookup.svelte';
-	import Silhouette, { silhouetteKind } from '$lib/components/Silhouette.svelte';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { altColor, fmtBearing } from '#lib/utils/geo.ts';
+	import { getPhoto, photoCache, type AircraftPhoto } from '#lib/api/photo.ts';
+	import { getRoute, routeCache, airportCode } from '#lib/api/route.ts';
+	import { reactiveLookup } from '#lib/utils/lookup.svelte.ts';
+	import Silhouette, { silhouetteKind } from '#lib/components/Silhouette.svelte';
 
 	// Compact closest-contact card with photo — used in the corner of the scopes.
 	let a = $derived(radarStore.snapshot?.nearest?.[0] ?? null);

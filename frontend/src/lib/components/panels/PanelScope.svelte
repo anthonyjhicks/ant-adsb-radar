@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { scopeSettings } from '$lib/stores/scopeSettings.svelte';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { scopeSettings } from '#lib/stores/scopeSettings.svelte.ts';
 	import {
 		polarToXY,
 		leaderEnd,
@@ -11,15 +11,15 @@
 		fmtBearing,
 		COMPASS_POINTS,
 		type XY
-	} from '$lib/utils/geo';
-	import type { Aircraft } from '$lib/types/radar';
-	import { getRoute, routeCache, airportCode } from '$lib/api/route';
-	import { reactiveLookup } from '$lib/utils/lookup.svelte';
-	import { AIRPORTS } from '$lib/data/airports';
-	import { AIRSPACE } from '$lib/data/airspace';
-	import coastline from '$lib/data/coastline.json';
-	import land from '$lib/data/land.json';
-	import rivers from '$lib/data/rivers.json';
+	} from '#lib/utils/geo.ts';
+	import type { Aircraft } from '#lib/types/radar.ts';
+	import { getRoute, routeCache, airportCode } from '#lib/api/route.ts';
+	import { reactiveLookup } from '#lib/utils/lookup.svelte.ts';
+	import { AIRPORTS } from '#lib/data/airports.ts';
+	import { AIRSPACE } from '#lib/data/airspace.ts';
+	import coastline from '#lib/data/coastline.json';
+	import land from '#lib/data/land.json';
+	import rivers from '#lib/data/rivers.json';
 	import ClosestCard from './ClosestCard.svelte';
 	import FlownCard from './FlownCard.svelte';
 	import EmergencyCard from './EmergencyCard.svelte';

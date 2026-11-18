@@ -7,8 +7,8 @@
 		type HourBucket,
 		type HistorySummary,
 		type AirframeStats
-	} from '$lib/api/history';
-	import { getPhotoStats, type PhotoCacheStats } from '$lib/api/photo';
+	} from '#lib/api/history.ts';
+	import { getPhotoStats, type PhotoCacheStats } from '#lib/api/photo.ts';
 
 	// Durable activity trends from the SQLite history: today-so-far vs yesterday,
 	// plus an hourly bar chart of unique aircraft over the last 24h.

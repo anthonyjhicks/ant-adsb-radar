@@ -3,8 +3,8 @@
 // the human-readable summaries and formatters shared by the scene HUD and the
 // runway cards. Pure functions — see weather.test.ts.
 
-import type { Metar, WeatherGroup } from '$lib/api/metar';
-import { bearingTo, haversineNm } from '$lib/utils/geo';
+import type { Metar, WeatherGroup } from '#lib/api/metar.ts';
+import { bearingTo, haversineNm } from '#lib/utils/geo.ts';
 
 export type PrecipKind = 'none' | 'rain' | 'drizzle' | 'snow' | 'sleet' | 'hail';
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { altColor, fmtBearing } from '$lib/utils/geo';
-	import { ensureRoute, routeCache, airportCode } from '$lib/api/route';
-	import type { Aircraft } from '$lib/types/radar';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { altColor, fmtBearing } from '#lib/utils/geo.ts';
+	import { ensureRoute, routeCache, airportCode } from '#lib/api/route.ts';
+	import type { Aircraft } from '#lib/types/radar.ts';
 
 	let snap = $derived(radarStore.snapshot);
 

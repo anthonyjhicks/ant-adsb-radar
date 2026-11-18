@@ -27,11 +27,11 @@
 	// URL overrides: ?rot=deg ?size=mul ?range=nm ?alt=ft ?debug=1
 
 	import { onMount } from 'svelte';
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { altColor } from '$lib/utils/geo';
-	import { ensureRoute, routeCache, airportCode } from '$lib/api/route';
-	import { getPhoto, photoCache, type AircraftPhoto } from '$lib/api/photo';
-	import PhotoFrame from '$lib/components/PhotoFrame.svelte';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { altColor } from '#lib/utils/geo.ts';
+	import { ensureRoute, routeCache, airportCode } from '#lib/api/route.ts';
+	import { getPhoto, photoCache, type AircraftPhoto } from '#lib/api/photo.ts';
+	import PhotoFrame from '#lib/components/PhotoFrame.svelte';
 
 	const SIZE = 1000;
 	const C = SIZE / 2;

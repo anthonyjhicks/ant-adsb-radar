@@ -1,4 +1,4 @@
-import { getSSEUrl } from '$lib/api/client';
+import { getSSEUrl } from '#lib/api/client.ts';
 
 type EventHandler = (data: unknown, eventType: string) => void;
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Dialog } from 'bits-ui';
-	import { cn } from '$lib/utils/cn';
+	import { cn } from '#lib/utils/cn.ts';
 	import type { Snippet } from 'svelte';
 	import DialogOverlay from './DialogOverlay.svelte';
 

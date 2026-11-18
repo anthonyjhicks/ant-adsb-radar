@@ -32,7 +32,7 @@ radio itself.
 - **Ideally on your local network.** The backend polls the receiver once a
   second, so it wants a LAN hop rather than the internet. Running the kiosk on
   the receiver host itself works well; a Raspberry Pi 4 copes.
-- **Docker + Compose** (or Python 3.12 and Node 22 to run it bare) on the
+- **Docker + Compose** (or Python 3.12 and Node 22.17+ to run it bare) on the
   machine that serves the kiosk, and **a screen** to put it on — a wall
   display, a spare monitor, a phone.
 - **Internet access is optional.** It's used only for aircraft photos, routes,

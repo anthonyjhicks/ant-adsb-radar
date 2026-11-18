@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { altColor, fmtBearing } from '$lib/utils/geo';
-	import { getPhoto, photoCache, type AircraftPhoto } from '$lib/api/photo';
-	import Silhouette, { silhouetteKind } from '$lib/components/Silhouette.svelte';
-	import PhotoCell from '$lib/components/PhotoCell.svelte';
-	import type { Aircraft } from '$lib/types/radar';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { altColor, fmtBearing } from '#lib/utils/geo.ts';
+	import { getPhoto, photoCache, type AircraftPhoto } from '#lib/api/photo.ts';
+	import Silhouette, { silhouetteKind } from '#lib/components/Silhouette.svelte';
+	import PhotoCell from '#lib/components/PhotoCell.svelte';
+	import type { Aircraft } from '#lib/types/radar.ts';
 
 	let ac = $derived(radarStore.snapshot?.aircraft ?? []);
 

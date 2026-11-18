@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { fmtBearing } from '$lib/utils/geo';
-	import { getPhoto, photoCache, type AircraftPhoto } from '$lib/api/photo';
-	import { getRoute, routeCache, airportCode } from '$lib/api/route';
-	import PhotoCell from '$lib/components/PhotoCell.svelte';
-	import type { Aircraft } from '$lib/types/radar';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { fmtBearing } from '#lib/utils/geo.ts';
+	import { getPhoto, photoCache, type AircraftPhoto } from '#lib/api/photo.ts';
+	import { getRoute, routeCache, airportCode } from '#lib/api/route.ts';
+	import PhotoCell from '#lib/components/PhotoCell.svelte';
+	import type { Aircraft } from '#lib/types/radar.ts';
 
 	// Photo-spotting mode: a 3×2 grid of the nearest photographed aircraft,
 	// shown at the planespotters native ~500px (no upscaling — at grid size they

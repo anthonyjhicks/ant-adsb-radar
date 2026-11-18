@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import { sseConnection } from '$lib/stores/sse.svelte';
-	import { radarStore } from '$lib/stores/radar.svelte';
-	import { scopeSettings } from '$lib/stores/scopeSettings.svelte';
-	import ScopeControls from '$lib/components/panels/ScopeControls.svelte';
-	import PanelScope from '$lib/components/panels/PanelScope.svelte';
+	import { sseConnection } from '#lib/stores/sse.svelte.ts';
+	import { radarStore } from '#lib/stores/radar.svelte.ts';
+	import { scopeSettings } from '#lib/stores/scopeSettings.svelte.ts';
+	import ScopeControls from '#lib/components/panels/ScopeControls.svelte';
+	import PanelScope from '#lib/components/panels/PanelScope.svelte';
 	import {
 		EMERGENCY_PANEL_ID,
 		PANELS,
@@ -14,8 +14,8 @@
 		applyStation,
 		visiblePanels,
 		withoutEmergency
-	} from '$lib/panels';
-	import { DEFAULT_STATION } from '$lib/api/config';
+	} from '#lib/panels.ts';
+	import { DEFAULT_STATION } from '#lib/api/config.ts';
 
 	let { data } = $props();
 

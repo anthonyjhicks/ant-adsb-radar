@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { scopeSettings, SCOPE_LAYERS } from '$lib/stores/scopeSettings.svelte';
+	import { scopeSettings, SCOPE_LAYERS } from '#lib/stores/scopeSettings.svelte.ts';
 </script>
 
 <div class="flex flex-wrap items-center gap-1.5">

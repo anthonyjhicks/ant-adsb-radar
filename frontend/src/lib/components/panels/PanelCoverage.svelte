@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getCoverage, getRecords, type Coverage, type Records } from '$lib/api/history';
-	import { fmtBearing } from '$lib/utils/geo';
+	import { getCoverage, getRecords, type Coverage, type Records } from '#lib/api/history.ts';
+	import { fmtBearing } from '#lib/utils/geo.ts';
 
 	// Receiver coverage + range records. The polar shows the best range achieved
 	// per bearing today vs all-time (two lobes); the side cards call out the

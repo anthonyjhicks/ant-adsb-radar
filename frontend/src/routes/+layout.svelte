@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { onMount } from 'svelte';
-	import { sseConnection } from '$lib/stores/sse.svelte';
+	import { sseConnection } from '#lib/stores/sse.svelte.ts';
 
 	let { children } = $props();
 
