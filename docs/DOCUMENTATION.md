@@ -43,7 +43,7 @@ readsb (:8080)                  backend (FastAPI :8001)              frontend (:
 | Layer      | Technology |
 |------------|------------|
 | Backend    | FastAPI + Pydantic v2 + httpx + protobuf, run with `uv` / uvicorn |
-| Frontend   | SvelteKit + Svelte 5 (runes) + Tailwind v4 + shadcn-svelte (bits-ui), adapter-node SSR |
+| Frontend   | SvelteKit 3 + Svelte 5 (runes) + Tailwind v4 + shadcn-svelte-style primitives, adapter-node SSR |
 | Real-time  | Server-Sent Events (SSE) at ~1 Hz |
 | Containers | Docker Compose (`backend` :8001, `frontend` :3000) |
 

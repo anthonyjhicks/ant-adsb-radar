@@ -41,8 +41,8 @@ jobs:
       - name: Install
         run: npm ci
       - name: Type-check
-        # src/env.ts declares PUBLIC_API_URL as required, so SvelteKit
-        # refuses to run the tests or build without it.
+        # PUBLIC_API_URL must be present so SvelteKit generates the
+        # $app/env/public export that client.ts imports.
         env:
           PUBLIC_API_URL: http://localhost:8001
         run: npm run check

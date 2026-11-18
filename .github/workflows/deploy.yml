@@ -50,7 +50,8 @@ jobs:
 
       - name: Frontend type-check
         working-directory: frontend
-        # src/env.ts declares PUBLIC_API_URL as required (the real value is
+        # PUBLIC_API_URL must be present so SvelteKit generates the
+        # $app/env/public export that client.ts imports (the real value is
         # baked in by the docker build on the host from the shipped .env).
         env:
           PUBLIC_API_URL: http://localhost:8001
