@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getLifelist, type Lifelist } from '$lib/api/history';
+	import { getLifelist, type Lifelist } from '#lib/api/history.ts';
 
 	// Type-Dex: a collection view of every aircraft TYPE the receiver has ever
 	// logged, surfacing the rarest visitors first (fewest distinct days seen).

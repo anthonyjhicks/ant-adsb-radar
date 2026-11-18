@@ -1,5 +1,5 @@
 import { apiGet } from './client';
-import type { RadarSnapshot, RadarStats } from '$lib/types/radar';
+import type { RadarSnapshot, RadarStats } from '#lib/types/radar.ts';
 
 export function getSnapshot(fetchFn: typeof fetch = fetch): Promise<RadarSnapshot> {
 	return apiGet<RadarSnapshot>('/api/radar/snapshot', fetchFn);

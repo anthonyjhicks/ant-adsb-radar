@@ -1,4 +1,4 @@
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 
 // Toggleable scope layers, shared across both scope panels and persisted to
 // localStorage. All default on (the full radar look).

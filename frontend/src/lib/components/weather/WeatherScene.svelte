@@ -2,7 +2,7 @@
 	// Canvas host for the animated sky (scene.ts). Owns the render loop for as
 	// long as it's on screen; the kiosk unmounts the view when it rotates away.
 	import { onMount } from 'svelte';
-	import type { SceneConditions } from '$lib/utils/weather';
+	import type { SceneConditions } from '#lib/utils/weather.ts';
 	import { WeatherSceneRenderer } from './scene';
 
 	let {

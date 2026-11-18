@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types';
-import { getPanelConfig, getStationConfig } from '$lib/api/config';
+import { getPanelConfig, getStationConfig } from '#lib/api/config.ts';
 
 export const load: PageLoad = async ({ fetch }) => {
 	// A backend that's down or has no writable config dir just means "no saved

@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
-import { getSnapshot, getStats } from '$lib/api/radar';
-import { getPanelConfig, getStationConfig } from '$lib/api/config';
+import { getSnapshot, getStats } from '#lib/api/radar.ts';
+import { getPanelConfig, getStationConfig } from '#lib/api/config.ts';
 
 export const load: PageLoad = async ({ fetch }) => {
 	try {

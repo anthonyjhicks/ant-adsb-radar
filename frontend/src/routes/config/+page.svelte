@@ -13,7 +13,7 @@
 		applyOrder,
 		applyStation,
 		type Panel
-	} from '$lib/panels';
+	} from '#lib/panels.ts';
 	import {
 		DEFAULT_STATION,
 		MAX_HOME_NM,
@@ -27,8 +27,8 @@
 		saveStationConfig,
 		type StationConfig,
 		type StationInput
-	} from '$lib/api/config';
-	import { RUNWAY_LAYOUTS } from '$lib/data/runways';
+	} from '#lib/api/config.ts';
+	import { RUNWAY_LAYOUTS } from '#lib/data/runways.ts';
 
 	let { data } = $props();
 

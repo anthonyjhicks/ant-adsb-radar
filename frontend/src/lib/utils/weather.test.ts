@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Metar } from '$lib/api/metar';
-import { RUNWAY_LAYOUTS, layoutGeometry } from '$lib/data/runways';
+import type { Metar } from '#lib/api/metar.ts';
+import { RUNWAY_LAYOUTS, layoutGeometry } from '#lib/data/runways.ts';
 import {
 	CALM_CONDITIONS,
 	compass16,

@@ -1,5 +1,5 @@
-import { sseConnection } from '$lib/stores/sse.svelte';
-import type { RadarSnapshot, RadarStats } from '$lib/types/radar';
+import { sseConnection } from '#lib/stores/sse.svelte.ts';
+import type { RadarSnapshot, RadarStats } from '#lib/types/radar.ts';
 
 const RATE_HISTORY_LEN = 120; // ~2 min at 1Hz
 const TRAIL_LEN = 40; // points kept per aircraft (~40s of history)

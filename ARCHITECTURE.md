@@ -10,7 +10,7 @@ enrich → SSE pipeline.
 | Layer | Technology |
 |-------|-----------|
 | Backend | FastAPI + Pydantic v2 + httpx + protobuf, uv |
-| Frontend | SvelteKit + Svelte 5 (runes) + Tailwind v4 + shadcn-svelte (bits-ui) |
+| Frontend | SvelteKit 3 + Svelte 5 (runes) + Tailwind v4 + shadcn-svelte-style primitives |
 | Real-time | Server-Sent Events (SSE) |
 | Containers | Docker Compose |
 
