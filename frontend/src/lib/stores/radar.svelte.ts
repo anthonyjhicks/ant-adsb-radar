@@ -7,11 +7,15 @@ const TRAIL_LEN = 40; // points kept per aircraft (~40s of history)
 export type TrailPoint = { lat: number; lon: number };
 
 class RadarStore {
-	snapshot = $state<RadarSnapshot | null>(null);
-	stats = $state<RadarStats | null>(null);
+	// Raw, not deep, state: each SSE event replaces the whole object (about
+	// 190 aircraft, every second) and nothing mutates it in place, so deep
+	// proxies would only add a proxy and a signal per field read, rebuilt
+	// every tick, for no finer-grained updates.
+	snapshot = $state.raw<RadarSnapshot | null>(null);
+	stats = $state.raw<RadarStats | null>(null);
 
 	// Rolling message-rate history for the stats sparkline.
-	rateHistory = $state<number[]>([]);
+	rateHistory = $state.raw<number[]>([]);
 
 	// Per-hex position history for scope track trails, accumulated from the ~1Hz
 	// updates (readsb's own history is empty here). Plain Map — read each render.
