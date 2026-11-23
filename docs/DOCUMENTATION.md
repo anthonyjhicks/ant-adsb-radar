@@ -553,6 +553,13 @@ AIRSPACE · RINGS · COVERAGE · SWEEP · TRAILS · VECTORS · LABELS`). Choices
 - `?view=<id>` — start on a specific view (any id from the table above).
 - `?paused=1` — hold there (ideal for a wall panel pinned to one view).
 - `?sweep=0` / `?vectors=0` — deep-link a clean scope with those layers off.
+- `?reload=<hours>` — how often the page reloads itself in full (default `4`, fractions
+  allowed, `0` for never). A display left running for days gets sluggish, especially
+  Chromium on a Raspberry Pi; a fresh page every few hours keeps it responsive and picks up
+  a redeploy. Works on every view, including `/above`. It waits while `/config` is open
+  and while an emergency is on screen (a reload would sound the klaxon again), and only
+  reloads once the server answers, so an outage never leaves the display on a browser
+  error page.
 
 Example fixed-panel links: `…/?view=local&paused=1`, `…/?view=scope&sweep=0&vectors=0`.
 
