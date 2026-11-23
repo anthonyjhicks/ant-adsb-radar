@@ -126,7 +126,8 @@ lib/components/panels/    # one Panel*.svelte per rotating view (see README "Vie
 lib/components/weather/   # WeatherScene.svelte + scene.ts: the canvas sky over the
                           #   station (Weather & Runways) — cloud decks, precipitation,
                           #   fog, lightning, drifting with the wind, lit by the real sun
-routes/+layout.svelte    # connect SSE
+routes/+layout.svelte    # connect SSE; full page reload every 4 h (lib/utils/autoReload.ts,
+                          #   ?reload=<hours>, held off at /config and during an emergency)
 routes/+page.ts          # SSR load: snapshot + stats + saved order/hidden/dwell + station
 routes/+page.svelte      # kiosk rotator (rotate, keys, UTC clock, ?view= deep-link,
                           #   emergency klaxon + takeover/hold, station name/coords in the header)
