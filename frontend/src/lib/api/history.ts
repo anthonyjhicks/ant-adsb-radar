@@ -1,4 +1,5 @@
 import { apiGet } from './client';
+import { BoundedCache } from '#lib/utils/boundedCache.ts';
 
 export interface HourBucket {
 	hour: number; // epoch seconds, hour-truncated
@@ -138,8 +139,8 @@ export interface AircraftHistory {
 	interesting: boolean;
 }
 
-// Shared client-side cache by ICAO hex.
-export const aircraftHistoryCache = new Map<string, AircraftHistory>();
+// Shared client-side cache by ICAO hex (bounded, as the kiosk runs for days).
+export const aircraftHistoryCache = new BoundedCache<string, AircraftHistory>(500);
 
 export function getAircraftHistory(hex: string, fetchFn: typeof fetch = fetch): Promise<AircraftHistory> {
 	const key = hex.replace(/^~/, '').toUpperCase();
