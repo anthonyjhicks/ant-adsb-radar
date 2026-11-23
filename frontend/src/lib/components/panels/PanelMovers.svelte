@@ -63,7 +63,13 @@
 
 	// Fetch a thumbnail per card aircraft, sharing the global photo cache with
 	// the Spotlight and scope cards so we never refetch the same hex.
-	let photos = $state<Record<string, AircraftPhoto>>({});
+	//
+	// Raw, not deep, state: the effect below compares `photos[key]` with the
+	// cached object by identity. Deep $state hands back a proxy that never
+	// equals the original, so every run rewrote `photos` and re-triggered
+	// itself until Svelte gave up with effect_update_depth_exceeded, which
+	// replaced the whole kiosk page with the error page.
+	let photos = $state.raw<Record<string, AircraftPhoto>>({});
 	const requested = new Set<string>();
 	$effect(() => {
 		for (const c of cards) {

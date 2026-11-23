@@ -350,7 +350,18 @@
 		{#key current.id}
 			{@const Panel = current.component as typeof PanelScope}
 			<div class="absolute inset-0 max-lg:overflow-y-auto" in:fade={{ duration: 300 }} out:fade={{ duration: 200 }}>
-				<Panel {...current.props} />
+				<!-- One view failing must not take the kiosk down: without this
+				     boundary an error in any panel replaces the whole page with the
+				     error page, and the rotation stops. The boundary lives inside
+				     the {#key}, so the next view starts fresh. -->
+				<svelte:boundary onerror={(e) => console.error(`View "${current.id}" failed:`, e)}>
+					<Panel {...current.props} />
+					{#snippet failed()}
+						<div class="flex h-full items-center justify-center text-sm uppercase tracking-widest text-muted-foreground/60">
+							{current.name} is unavailable right now
+						</div>
+					{/snippet}
+				</svelte:boundary>
 			</div>
 		{/key}
 		{#if paused}
