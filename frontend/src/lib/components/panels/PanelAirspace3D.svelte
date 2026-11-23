@@ -59,6 +59,12 @@
 
 	// Auto-orbit. Yaw advances ~7.5°/s (a full turn every ~48s); paused for users
 	// who prefer reduced motion, held at a pleasant three-quarter angle instead.
+	//
+	// Every yaw step re-projects and re-renders the whole SVG (each contact,
+	// stem and ring), which kept a Pi-class CPU busy for the full frame at
+	// display rate. At this orbit speed 30 steps a second moves the outer ring
+	// under 2px per step, so redraw at most that often.
+	const ORBIT_FRAME_MS = 1000 / 30;
 	let yaw = $state(0.6);
 	onMount(() => {
 		const reduce =
@@ -67,9 +73,12 @@
 		let raf = 0;
 		let prev = 0;
 		const tick = (t: number) => {
-			if (prev) yaw = (yaw + ((t - prev) / 1000) * 0.131) % (Math.PI * 2);
-			prev = t;
 			raf = requestAnimationFrame(tick);
+			if (!prev) prev = t;
+			// A hair under the step so a 60 Hz display reliably draws every other frame.
+			if (t - prev < ORBIT_FRAME_MS - 2) return;
+			yaw = (yaw + (Math.min(t - prev, 250) / 1000) * 0.131) % (Math.PI * 2);
+			prev = t;
 		};
 		raf = requestAnimationFrame(tick);
 		return () => cancelAnimationFrame(raf);
