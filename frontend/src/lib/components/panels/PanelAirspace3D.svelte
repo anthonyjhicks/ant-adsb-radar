@@ -37,6 +37,12 @@
 	);
 	let pxPerNm = $derived(groundPx / maxNm);
 
+	// Screen rise of an altitude above its ground point. The camera only yaws
+	// about the vertical axis, so this never changes as the scene orbits.
+	function rise(altFt: number): number {
+		return (Math.max(0, altFt) / maxAlt) * altPx * cosP;
+	}
+
 	// Range rings on the ground plane, and the altitude ticks for the centre pole.
 	let rings = $derived(
 		Array.from({ length: Math.floor(maxNm / (maxNm <= 40 ? 10 : maxNm <= 120 ? 40 : 80)) }, (_, i) =>
@@ -59,11 +65,8 @@
 
 	// Auto-orbit. Yaw advances ~7.5°/s (a full turn every ~48s); paused for users
 	// who prefer reduced motion, held at a pleasant three-quarter angle instead.
-	//
-	// Every yaw step re-projects and re-renders the whole SVG (each contact,
-	// stem and ring), which kept a Pi-class CPU busy for the full frame at
-	// display rate. At this orbit speed 30 steps a second moves the outer ring
-	// under 2px per step, so redraw at most that often.
+	// At this orbit speed 30 steps a second moves the outer ring under 2px per
+	// step, so redraw at most that often.
 	const ORBIT_FRAME_MS = 1000 / 30;
 	let yaw = $state(0.6);
 	onMount(() => {
@@ -84,65 +87,145 @@
 		return () => cancelAnimationFrame(raf);
 	});
 
-	// Project a world point (east/north in nm, altitude in ft) to the screen.
-	// Yaw about the vertical axis, then tilt the camera down by PITCH.
-	function project(eastNm: number, northNm: number, altFt: number) {
-		const X = eastNm * pxPerNm;
-		const Y = northNm * pxPerNm;
-		const Z = (Math.max(0, altFt) / maxAlt) * altPx;
-		const cosY = Math.cos(yaw);
-		const sinY = Math.sin(yaw);
-		const xr = X * cosY - Y * sinY;
-		const yr = X * sinY + Y * cosY;
-		return { x: cx + xr, y: cy - yr * sinP - Z * cosP, depth: yr };
-	}
-
-	// A ground-plane circle (range ring) as an SVG path, sampled and projected.
-	function ringPath(r: number): string {
-		let d = '';
-		for (let i = 0; i <= 64; i++) {
-			const t = (i / 64) * Math.PI * 2;
-			const p = project(r * Math.sin(t), r * Math.cos(t), 0);
-			d += `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)} ${p.y.toFixed(1)} `;
-		}
-		return d + 'Z';
-	}
-
-	type Plotted = {
+	type Placed = {
 		a: Aircraft;
-		air: { x: number; y: number; depth: number };
-		ground: { x: number; y: number; depth: number };
+		east: number; // ground position, screen px from the station
+		north: number;
+		rise: number; // screen px from the ground point up to the blip
 		color: string;
-		size: number;
-		near: number; // 0 (far) .. 1 (near camera) for depth shading
+		label: string | null;
 	};
 
-	// Project every contact, then painter-sort far-to-near so nearer blips sit on
-	// top. `near` drives a subtle size/opacity falloff that reads as depth.
-	let plotted = $derived.by<Plotted[]>(() => {
-		const span = maxNm * pxPerNm || 1;
-		return contacts
-			.map((a) => {
-				const east = (a.distance_nm as number) * Math.sin(((a.bearing as number) * Math.PI) / 180);
-				const north = (a.distance_nm as number) * Math.cos(((a.bearing as number) * Math.PI) / 180);
-				const air = project(east, north, a.alt_baro as number);
-				const ground = project(east, north, 0);
-				const near = 1 - Math.min(1, Math.max(0, (air.depth + span) / (span * 2)));
-				return {
-					a,
-					air,
-					ground,
-					color: altColor(a.flight_level, false, !!a.emergency),
-					size: 3.5 + near * 2.5,
-					near
-				};
-			})
-			.sort((p, q) => q.air.depth - p.air.depth);
+	// Everything about a contact that does not depend on the orbit. Recomputed
+	// when the data changes (about once a second), not every orbit step.
+	let placed = $derived<Placed[]>(
+		contacts.map((a) => {
+			const brg = ((a.bearing as number) * Math.PI) / 180;
+			const nm = a.distance_nm as number;
+			return {
+				a,
+				east: nm * Math.sin(brg) * pxPerNm,
+				north: nm * Math.cos(brg) * pxPerNm,
+				rise: rise(a.alt_baro as number),
+				color: altColor(a.flight_level, false, !!a.emergency),
+				label: labelHexes.has(a.hex) ? (a.flight ?? a.hex).trim() : null
+			};
+		})
+	);
+
+	// What orbits is drawn on a canvas laid over the SVG; the SVG keeps what
+	// does not move. Range rings, the pole and its FL ticks are centred on the
+	// station, and a circle about the yaw axis projects to the same ellipse at
+	// any yaw, so the SVG never changes as the scene turns. Re-projecting and
+	// restyling a few hundred SVG elements every step is what filled a Pi-class
+	// main thread; repainting a canvas costs a fraction of that.
+	let canvas = $state<HTMLCanvasElement>();
+	let box = $state({ w: 0, h: 0, dpr: 1 });
+	onMount(() => {
+		const el = canvas;
+		if (!el) return;
+		const ro = new ResizeObserver(([e]) => {
+			const dpr = window.devicePixelRatio || 1;
+			el.width = Math.round(e.contentRect.width * dpr);
+			el.height = Math.round(e.contentRect.height * dpr);
+			box = { w: e.contentRect.width, h: e.contentRect.height, dpr };
+		});
+		ro.observe(el);
+		return () => ro.disconnect();
 	});
 
-	let poleTop = $derived(project(0, 0, maxAlt));
-	let poleBase = $derived(project(0, 0, 0));
-	let northMark = $derived(project(0, maxNm, 0));
+	// The canvas cannot take `var(--…)`, so read the theme colours off it.
+	const resolved = new Map<string, string>();
+	function cssColor(el: HTMLCanvasElement, c: string): string {
+		const name = /^var\((--[\w-]+)\)$/.exec(c)?.[1];
+		if (!name) return c;
+		let v = resolved.get(name);
+		if (v === undefined) resolved.set(name, (v = getComputedStyle(el).getPropertyValue(name).trim()));
+		return v;
+	}
+
+	$effect(() => {
+		const ctx = canvas?.getContext('2d');
+		if (!ctx || !box.w) return;
+		draw(ctx, box, yaw, placed);
+	});
+
+	function draw(ctx: CanvasRenderingContext2D, { w, h, dpr }: typeof box, at: number, items: Placed[]) {
+		ctx.setTransform(1, 0, 0, 1, 0, 0);
+		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		// The SVG's user space: viewBox 0 0 W H, preserveAspectRatio xMidYMid meet.
+		const k = Math.min(w / W, h / H);
+		ctx.setTransform(k * dpr, 0, 0, k * dpr, ((w - W * k) / 2) * dpr, ((h - H * k) / 2) * dpr);
+
+		// Project a ground point (east/north in screen px from the station): yaw
+		// about the vertical axis, then tilt the camera down by PITCH. `depth`
+		// grows away from the camera.
+		const sinY = Math.sin(at);
+		const cosY = Math.cos(at);
+		const ground = (east: number, north: number) => {
+			const depth = east * sinY + north * cosY;
+			return { x: cx + east * cosY - north * sinY, y: cy - depth * sinP, depth };
+		};
+
+		const line = cssColor(ctx.canvas, 'var(--scope-line)');
+		const flown = cssColor(ctx.canvas, 'var(--flown)');
+
+		// Rotating north marker on the outer ring.
+		const n = ground(0, groundPx);
+		ctx.globalAlpha = 0.7;
+		ctx.fillStyle = line;
+		ctx.font = '14px monospace';
+		ctx.textAlign = 'center';
+		ctx.fillText('N', n.x, n.y + 4);
+		ctx.textAlign = 'start';
+		ctx.font = '12px monospace';
+		ctx.lineWidth = 1.5;
+
+		// Contacts, painter-sorted far to near so nearer blips sit on top: ground
+		// shadow, drop stem, flown ring, blip and label.
+		const plotted = items
+			.map((p) => ({ p, g: ground(p.east, p.north) }))
+			.sort((m, q) => q.g.depth - m.g.depth);
+		for (const { p, g } of plotted) {
+			// 0 (far) .. 1 (near camera): a subtle size/opacity falloff that reads as depth.
+			const near = 1 - Math.min(1, Math.max(0, (g.depth + groundPx) / (groundPx * 2)));
+			const size = 3.5 + near * 2.5;
+			const color = cssColor(ctx.canvas, p.color);
+			const ay = g.y - p.rise;
+
+			ctx.globalAlpha = 0.12 + near * 0.18;
+			ctx.fillStyle = line;
+			ctx.beginPath();
+			ctx.arc(g.x, g.y, 2, 0, Math.PI * 2);
+			ctx.fill();
+
+			ctx.globalAlpha = 0.18 + near * 0.32;
+			ctx.strokeStyle = color;
+			ctx.beginPath();
+			ctx.moveTo(g.x, g.y);
+			ctx.lineTo(g.x, ay);
+			ctx.stroke();
+
+			if (p.a.flown) {
+				ctx.globalAlpha = 1;
+				ctx.strokeStyle = flown;
+				ctx.beginPath();
+				ctx.arc(g.x, ay, size + 3.5, 0, Math.PI * 2);
+				ctx.stroke();
+			}
+
+			ctx.globalAlpha = 0.55 + near * 0.45;
+			ctx.fillStyle = color;
+			ctx.beginPath();
+			ctx.arc(g.x, ay, size, 0, Math.PI * 2);
+			ctx.fill();
+
+			if (p.label) {
+				ctx.globalAlpha = 0.5 + near * 0.45;
+				ctx.fillText(p.label, g.x + size + 3, ay + 4);
+			}
+		}
+	}
 </script>
 
 <div class="flex h-full flex-col px-6 py-4 max-lg:h-auto max-lg:min-h-full max-lg:px-3">
@@ -154,42 +237,24 @@
 		<div class="text-xs text-muted-foreground">{contacts.length} airborne</div>
 	</div>
 
-	<div class="min-h-0 flex-1 max-lg:h-[70vh] max-lg:flex-none">
+	<div class="relative min-h-0 flex-1 max-lg:h-[70vh] max-lg:flex-none">
 		<svg viewBox="0 0 {W} {H}" class="h-full w-full" preserveAspectRatio="xMidYMid meet">
-			<!-- ground-plane range rings -->
+			<!-- ground-plane range rings (the same ellipse at every yaw) -->
 			{#each rings as r (r)}
-				<path d={ringPath(r)} fill="none" stroke="var(--scope-line)" stroke-opacity="0.12" stroke-width="1" />
+				<ellipse {cx} {cy} rx={r * pxPerNm} ry={r * pxPerNm * sinP} fill="none" stroke="var(--scope-line)" stroke-opacity="0.12" stroke-width="1" />
 			{/each}
 
 			<!-- centre altitude pole + FL ticks (fixed; the scene orbits around it) -->
-			<line x1={poleBase.x} y1={poleBase.y} x2={poleTop.x} y2={poleTop.y} stroke="var(--scope-line)" stroke-opacity="0.18" stroke-width="1" />
-			<circle cx={poleBase.x} cy={poleBase.y} r="4" fill="var(--scope-sweep)" />
+			<line x1={cx} y1={cy} x2={cx} y2={cy - rise(maxAlt)} stroke="var(--scope-line)" stroke-opacity="0.18" stroke-width="1" />
+			<circle {cx} {cy} r="4" fill="var(--scope-sweep)" />
 			{#each altTicks as alt (alt)}
-				{@const p = project(0, 0, alt)}
-				<line x1={p.x - 5} y1={p.y} x2={p.x + 5} y2={p.y} stroke="var(--scope-line)" stroke-opacity="0.35" stroke-width="1" />
-				<text x={p.x - 9} y={p.y + 4} fill="var(--scope-line)" fill-opacity="0.6" font-size="12" font-family="monospace" text-anchor="end">FL{alt / 100}</text>
-			{/each}
-
-			<!-- rotating north marker on the outer ring -->
-			<text x={northMark.x} y={northMark.y + 4} fill="var(--scope-line)" fill-opacity="0.7" font-size="14" font-family="monospace" text-anchor="middle">N</text>
-
-			<!-- contacts: ground shadow, drop stem, blip -->
-			{#each plotted as p (p.a.hex)}
-				<g class={p.a.emergency ? 'emerg' : ''}>
-					<circle cx={p.ground.x} cy={p.ground.y} r="2" fill="var(--scope-line)" fill-opacity={0.12 + p.near * 0.18} />
-					<line x1={p.ground.x} y1={p.ground.y} x2={p.air.x} y2={p.air.y} stroke={p.color} stroke-width="1.5" stroke-opacity={0.18 + p.near * 0.32} />
-					{#if p.a.flown}
-						<circle cx={p.air.x} cy={p.air.y} r={p.size + 3.5} fill="none" stroke="var(--flown)" stroke-width="1.5" />
-					{/if}
-					<circle cx={p.air.x} cy={p.air.y} r={p.size} fill={p.color} fill-opacity={0.55 + p.near * 0.45} />
-					{#if labelHexes.has(p.a.hex)}
-						<text x={p.air.x + p.size + 3} y={p.air.y + 4} fill={p.color} fill-opacity={0.5 + p.near * 0.45} font-size="12" font-family="monospace">
-							{p.a.flight ?? p.a.hex}
-						</text>
-					{/if}
-				</g>
+				{@const y = cy - rise(alt)}
+				<line x1={cx - 5} y1={y} x2={cx + 5} y2={y} stroke="var(--scope-line)" stroke-opacity="0.35" stroke-width="1" />
+				<text x={cx - 9} y={y + 4} fill="var(--scope-line)" fill-opacity="0.6" font-size="12" font-family="monospace" text-anchor="end">FL{alt / 100}</text>
 			{/each}
 		</svg>
+		<!-- what orbits: the north marker and the contacts -->
+		<canvas bind:this={canvas} class="pointer-events-none absolute inset-0 h-full w-full"></canvas>
 	</div>
 
 	<!-- legend -->
