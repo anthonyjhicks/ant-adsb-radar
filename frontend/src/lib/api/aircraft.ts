@@ -1,4 +1,5 @@
 import { apiGet } from './client';
+import { BoundedCache } from '#lib/utils/boundedCache.ts';
 
 // adsbdb's static airframe record — complements the Mictronics enrichment on
 // the live snapshot with owner/manufacturer/country detail.
@@ -13,8 +14,8 @@ export interface AircraftDetails {
 	photo: string | null; // planespotters thumbnail URL (we serve our own proxy separately)
 }
 
-// Shared client-side cache by ICAO hex.
-export const aircraftCache = new Map<string, AircraftDetails>();
+// Shared client-side cache by ICAO hex (bounded, as the kiosk runs for days).
+export const aircraftCache = new BoundedCache<string, AircraftDetails>(500);
 
 export function getAircraft(hex: string, fetchFn: typeof fetch = fetch): Promise<AircraftDetails> {
 	const key = hex.replace(/^~/, '').toUpperCase();

@@ -1,4 +1,5 @@
 import { apiGet, apiUrl } from './client';
+import { BoundedCache } from '#lib/utils/boundedCache.ts';
 
 export interface AircraftPhoto {
 	thumbnail: string | null;
@@ -7,8 +8,8 @@ export interface AircraftPhoto {
 }
 
 // Shared client-side cache (by ICAO hex) so the Spotlight and the scope card
-// don't refetch the same aircraft.
-export const photoCache = new Map<string, AircraftPhoto>();
+// don't refetch the same aircraft. Bounded, as the kiosk runs for days.
+export const photoCache = new BoundedCache<string, AircraftPhoto>(500);
 
 export interface PhotoCacheStats {
 	hits: number;

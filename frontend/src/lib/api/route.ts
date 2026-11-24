@@ -1,4 +1,5 @@
 import { apiGet } from './client';
+import { BoundedCache } from '#lib/utils/boundedCache.ts';
 
 export interface Airport {
 	iata: string | null;
@@ -25,7 +26,8 @@ export interface FlightRoute {
 }
 
 // Shared cache by callsign so cards + scope don't refetch the same route.
-export const routeCache = new Map<string, FlightRoute>();
+// Bounded: a kiosk left running meets thousands of callsigns a day.
+export const routeCache = new BoundedCache<string, FlightRoute>(1000);
 
 export function getRoute(callsign: string, fetchFn: typeof fetch = fetch): Promise<FlightRoute> {
 	return apiGet<FlightRoute>(`/api/route/${encodeURIComponent(callsign)}`, fetchFn);

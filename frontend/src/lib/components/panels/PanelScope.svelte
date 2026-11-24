@@ -497,13 +497,18 @@
 	.emerg {
 		animation: emerg-flash 1s ease-in-out infinite;
 	}
+	/* Pulse with `opacity` (the ring's stroke-opacity stays at 0.5, so this is
+	   still 0.5 → 0.15). Chromium runs opacity animations on the compositor;
+	   animating stroke-opacity instead repainted and re-layered the whole
+	   scope SVG every frame, roughly ten times the main-thread work of
+	   everything else on the scope put together. */
 	@keyframes flown-pulse {
 		0%,
 		100% {
-			stroke-opacity: 0.5;
+			opacity: 1;
 		}
 		50% {
-			stroke-opacity: 0.15;
+			opacity: 0.3;
 		}
 	}
 	.flown-ring {
